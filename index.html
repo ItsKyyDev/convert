@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Biner & Desimal</title>
+    <!-- Menggunakan Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Menggunakan font Google 'Nunito' untuk kesan yang ramah dan tidak kaku -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        /* Kustomisasi scrollbar ringan jika teks terlalu panjang */
+        ::-webkit-scrollbar {
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen flex items-center justify-center p-4 sm:p-8">
+
+    <!-- Container Utama dengan bayangan lembut dan sudut membulat -->
+    <div class="bg-white/80 backdrop-blur-lg w-full max-w-md rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] p-6 sm:p-10 border border-white/50 transition-all duration-300 hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.15)]">
+        
+        <div class="text-center mb-8">
+            <div class="bg-indigo-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-indigo-500 shadow-sm rotate-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight">Konverter Angka</h1>
+            <p class="text-gray-500 text-sm sm:text-base mt-2 font-medium">Biner ⟷ Desimal Otomatis</p>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Input Biner -->
+            <div class="relative group">
+                <label for="binaryInput" class="block text-sm font-bold text-gray-700 mb-2 ml-1 transition-colors group-focus-within:text-indigo-600">Angka Biner</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="binaryInput" 
+                        placeholder="---" 
+                        class="w-full bg-gray-50 text-gray-800 text-lg border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100 transition-all duration-300 placeholder-gray-400 font-mono tracking-wider"
+                    >
+                    <div id="binaryErrorIcon" class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 opacity-0 transition-opacity">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <!-- Pesan Error -->
+                <p id="binaryErrorMsg" class="text-red-500 text-sm mt-2 ml-1 font-semibold opacity-0 h-0 overflow-hidden transition-all duration-300">
+                    Oops! Biner hanya boleh berisi angka 0 dan 1.
+                </p>
+            </div>
+
+            <!-- Separator Visual -->
+            <div class="flex items-center justify-center relative py-2">
+                <div class="w-full border-t border-gray-200"></div>
+                <div class="absolute bg-white px-3 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Input Desimal -->
+            <div class="relative group">
+                <label for="decimalInput" class="block text-sm font-bold text-gray-700 mb-2 ml-1 transition-colors group-focus-within:text-purple-600">Angka Desimal</label>
+                <input 
+                    type="number" 
+                    id="decimalInput" 
+                    placeholder="---" 
+                    class="w-full bg-gray-50 text-gray-800 text-lg border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all duration-300 placeholder-gray-400 font-mono tracking-wider"
+                >
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <button id="clearBtn" class="text-gray-400 hover:text-gray-600 font-semibold text-sm transition-colors px-4 py-2 rounded-lg hover:bg-gray-100">
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <!-- Script Logika -->
+    <script>
+        const binaryInput = document.getElementById('binaryInput');
+        const decimalInput = document.getElementById('decimalInput');
+        const binaryErrorMsg = document.getElementById('binaryErrorMsg');
+        const binaryErrorIcon = document.getElementById('binaryErrorIcon');
+        const clearBtn = document.getElementById('clearBtn');
+
+        // Fungsi untuk mengatur tampilan error pada input biner
+        function setBinaryError(isError) {
+            if (isError) {
+                binaryInput.classList.remove('focus:border-indigo-400', 'focus:ring-indigo-100', 'border-transparent');
+                binaryInput.classList.add('border-red-400', 'focus:border-red-500', 'focus:ring-red-100', 'bg-red-50');
+                
+                binaryErrorMsg.classList.remove('opacity-0', 'h-0');
+                binaryErrorMsg.classList.add('opacity-100', 'h-6');
+                
+                binaryErrorIcon.classList.remove('opacity-0');
+                binaryErrorIcon.classList.add('opacity-100');
+            } else {
+                binaryInput.classList.add('focus:border-indigo-400', 'focus:ring-indigo-100', 'border-transparent');
+                binaryInput.classList.remove('border-red-400', 'focus:border-red-500', 'focus:ring-red-100', 'bg-red-50');
+                
+                binaryErrorMsg.classList.add('opacity-0', 'h-0');
+                binaryErrorMsg.classList.remove('opacity-100', 'h-6');
+                
+                binaryErrorIcon.classList.add('opacity-0');
+                binaryErrorIcon.classList.remove('opacity-100');
+            }
+        }
+
+        // Event listener saat pengguna mengetik di input Biner
+        binaryInput.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            
+            // Jika kosong, kosongkan juga desimal dan hapus error
+            if (val === '') {
+                decimalInput.value = '';
+                setBinaryError(false);
+                return;
+            }
+
+            // Validasi apakah hanya berisi 0 dan 1 menggunakan Regex
+            const isBinaryValid = /^[01]+$/.test(val);
+
+            if (!isBinaryValid) {
+                setBinaryError(true);
+                decimalInput.value = ''; // Kosongkan desimal karena biner tidak valid
+            } else {
+                setBinaryError(false);
+                // Konversi Biner ke Desimal: parseInt(value, basis_sumber)
+                const decimalValue = parseInt(val, 2);
+                decimalInput.value = decimalValue;
+            }
+        });
+
+        // Event listener saat pengguna mengetik di input Desimal
+        decimalInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+
+            // Jika kosong, kosongkan juga biner
+            if (val === '') {
+                binaryInput.value = '';
+                setBinaryError(false);
+                return;
+            }
+
+            const decimalNum = parseInt(val, 10);
+            
+            // Pastikan itu adalah angka yang valid dan positif
+            if (!isNaN(decimalNum) && decimalNum >= 0) {
+                // Konversi Desimal ke Biner: (angka).toString(basis_tujuan)
+                binaryInput.value = decimalNum.toString(2);
+                setBinaryError(false);
+            }
+        });
+
+        // Event listener untuk tombol Bersihkan Input
+        clearBtn.addEventListener('click', () => {
+            binaryInput.value = '';
+            decimalInput.value = '';
+            setBinaryError(false);
+            binaryInput.focus();
+        });
+    </script>
+</body>
+</html>
